@@ -1,12 +1,12 @@
-"use strict";
+'use strict'
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const countConnect = () => {
-  const numConnection = mongoose.connections.length;
-  console.log(`Number of connections: ${numConnection}`);
-};
+    const numConnection = mongoose.connections.length
+    console.log(`Number of connections: ${numConnection}`)
+}
 
 module.exports = {
-  countConnect,
-};
+    countConnect,
+}
