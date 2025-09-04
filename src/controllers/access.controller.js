@@ -1,14 +1,16 @@
 'use strict';
 
+const { CREATED } = require('../core/success.response');
 const AccessService = require('../services/access.service');
 
 class AccessController {
     signUp = async (req, res, next) => {
-        try {
-            res.send(await AccessService.signUp(req.body));
-        } catch (error) {
-            next(error);
-        }
+        new CREATED({
+            message: 'Shop created successfully',
+            metadata: await AccessService.signUp(req.body),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
     };
 }
 
