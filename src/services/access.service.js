@@ -5,8 +5,9 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
-const { getInfoData } = require('../utils');
+const { getInfoData, generateKeyPairSync } = require('../utils');
 const { BadRequestError } = require('../core/error.response');
+const { findShopByEmail } = require('./shop.service');
 
 const RoleShop = {
     SHOP: 'SHOP',
@@ -41,20 +42,7 @@ class AccessService {
 
         if (newShop) {
             // created private key, publicKey
-            const { privateKey, publicKey } = await crypto.generateKeyPairSync(
-                'rsa',
-                {
-                    modulusLength: 4096,
-                    publicKeyEncoding: {
-                        type: 'pkcs1',
-                        format: 'pem',
-                    },
-                    privateKeyEncoding: {
-                        type: 'pkcs1',
-                        format: 'pem',
-                    },
-                },
-            );
+            const { privateKey, publicKey } = await generateKeyPairSync();
 
             const publicKeyString = await KeyTokenService.createKeyToken({
                 userId: newShop._id,
@@ -90,6 +78,51 @@ class AccessService {
         return {
             code: 200,
             metadata: null,
+        };
+    };
+    static login = async ({ email, password, refreshToken = null }) => {
+        // Step 1: check email existed?
+        const existingShop = await findShopByEmail({ email });
+        if (!existingShop) {
+            throw new BadRequestError('Shop not registered');
+        }
+        // Step 2: check password
+        const match = await bcrypt.compare(password, existingShop.password);
+        if (!match) {
+            throw new BadRequestError('Password is incorrect');
+        }
+        // Step 2: create publicKey, privateKey
+        const { privateKey, publicKey } = await generateKeyPairSync({
+            algorithm: 'rsa',
+        });
+
+        const publicKeyString = await KeyTokenService.createKeyToken({
+            userId: existingShop._id,
+            publicKey,
+            refreshToken,
+        });
+
+        if (!publicKeyString) {
+            throw new BadRequestError('Error: KeyTokenService error');
+        }
+
+        const publicKeyObject = crypto.createPublicKey(publicKeyString);
+        // Step 3: create token pair
+        const tokens = await createTokenPair(
+            { userId: existingShop._id, email },
+            publicKeyObject,
+            privateKey,
+        );
+
+        return {
+            code: 200,
+            metadata: {
+                shop: getInfoData({
+                    field: ['_id', 'name', 'email'],
+                    object: existingShop,
+                }),
+                tokens,
+            },
         };
     };
 }

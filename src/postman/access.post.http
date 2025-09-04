@@ -3,9 +3,20 @@
 ### Sign Up Shop
 POST {{url_dev}}/shop/signup
 Content-Type: application/json
+x-api-key: 
 
 {
     "name": "John Doe",
+    "email": "john.doe3@example.com",
+    "password": "securepassword"
+}
+
+### Login Shop
+POST {{url_dev}}/shop/login
+Content-Type: application/json
+x-api-key: 
+
+{
     "email": "john.doe3@example.com",
     "password": "securepassword"
 }

@@ -12,6 +12,14 @@ class AccessController {
             'Content-Type': 'application/json',
         });
     };
+    login = async (req, res, next) => {
+        new CREATED({
+            message: 'Shop login successfully',
+            metadata: await AccessService.login(req.body),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
+    };
 }
 
 module.exports = new AccessController();
