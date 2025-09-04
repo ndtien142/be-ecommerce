@@ -7,6 +7,12 @@ const compression = require('compression');
 
 const app = express();
 
+// parse application/json
+app.use(express.json());
+
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
 app.use(morgan('dev'));
 // morgan("combined");
 // morgan("tiny");
@@ -19,10 +25,10 @@ app.use(compression());
 
 // init db
 require('./dbs/init.mongodb');
-const { countConnect, checkOverload } = require('./helpers/check.connect');
+// const { countConnect, checkOverload } = require('./helpers/check.connect');
 
 // countConnect();
-checkOverload();
+// checkOverload();
 
 // init routes
 app.use('/', require('./routes'));
