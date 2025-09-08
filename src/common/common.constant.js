@@ -11,7 +11,21 @@ const RoleShop = {
     ADMIN: 'ADMIN',
 };
 
+const ProductCollectionName = {
+    PRODUCT: 'Products',
+    CLOTHING: 'Clothings',
+    ELECTRONICS: 'Electronics',
+};
+
+const ProductDocumentName = {
+    PRODUCT: 'Product',
+    CLOTHING: 'Clothing',
+    ELECTRONICS: 'Electronic',
+};
+
 module.exports = {
     HEADER,
     RoleShop,
+    ProductCollectionName,
+    ProductDocumentName,
 };
