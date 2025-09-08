@@ -20,6 +20,14 @@ class AccessController {
             'Content-Type': 'application/json',
         });
     };
+    logout = async (req, res, next) => {
+        new CREATED({
+            message: 'Shop logout successfully',
+            metadata: await AccessService.logout({ keyStore: req.keyStore }),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
+    };
 }
 
 module.exports = new AccessController();

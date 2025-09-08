@@ -8,13 +8,7 @@ const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData, generateKeyPairSync } = require('../utils');
 const { BadRequestError } = require('../core/error.response');
 const { findShopByEmail } = require('./shop.service');
-
-const RoleShop = {
-    SHOP: 'SHOP',
-    WRITER: 'WRITER',
-    EDITOR: 'EDITOR',
-    ADMIN: 'ADMIN',
-};
+const { RoleShop } = require('../common/common.constant');
 
 class AccessService {
     static signUp = async ({ name, email, password }) => {
@@ -124,6 +118,12 @@ class AccessService {
                 tokens,
             },
         };
+    };
+    static logout = async ({ keyStore }) => {
+        // remove refreshToken in db
+        const removeToken = await KeyTokenService.removeKeyById(keyStore._id);
+        console.log('removeToken::', removeToken);
+        return removeToken;
     };
 }
 
