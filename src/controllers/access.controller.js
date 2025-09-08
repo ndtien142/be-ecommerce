@@ -1,12 +1,32 @@
 'use strict';
 
+const { CREATED } = require('../core/success.response');
+const AccessService = require('../services/access.service');
+
 class AccessController {
     signUp = async (req, res, next) => {
-        try {
-            const { name, email, password } = req.body;
-        } catch (error) {
-            next(error);
-        }
+        new CREATED({
+            message: 'Shop created successfully',
+            metadata: await AccessService.signUp(req.body),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
+    };
+    login = async (req, res, next) => {
+        new CREATED({
+            message: 'Shop login successfully',
+            metadata: await AccessService.login(req.body),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
+    };
+    logout = async (req, res, next) => {
+        new CREATED({
+            message: 'Shop logout successfully',
+            metadata: await AccessService.logout({ keyStore: req.keyStore }),
+        }).send(res, {
+            'Content-Type': 'application/json',
+        });
     };
 }
 
