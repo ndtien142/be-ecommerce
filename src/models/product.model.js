@@ -17,8 +17,8 @@ const productSchema = new Schema(
             type: String,
             required: true,
             enum: [
-                'Electronics',
-                'Clothes',
+                'Electronic',
+                'Clothing',
                 'Furniture',
                 'Toys',
                 'Books',
@@ -61,7 +61,7 @@ const electronicsSchema = new Schema(
     },
 );
 
-model.exports = {
+module.exports = {
     product: model(ProductDocumentName.PRODUCT, productSchema),
     clothing: model(ProductDocumentName.CLOTHING, clothingSchema),
     electronics: model(ProductDocumentName.ELECTRONICS, electronicsSchema),
