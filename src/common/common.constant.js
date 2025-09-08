@@ -15,12 +15,14 @@ const ProductCollectionName = {
     PRODUCT: 'Products',
     CLOTHING: 'Clothings',
     ELECTRONICS: 'Electronics',
+    FURNITURE: 'Furniture',
 };
 
 const ProductDocumentName = {
     PRODUCT: 'Product',
     CLOTHING: 'Clothing',
     ELECTRONICS: 'Electronic',
+    FURNITURE: 'Furniture',
 };
 
 module.exports = {

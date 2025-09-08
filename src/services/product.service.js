@@ -1,7 +1,13 @@
 'use strict';
 
+const { extend } = require('lodash');
 const { BadRequestError } = require('../core/error.response');
-const { clothing, electronics, product } = require('../models/product.model');
+const {
+    clothing,
+    electronics,
+    product,
+    furniture,
+} = require('../models/product.model');
 
 // define the Factory Method class to create products based on their type
 class ProductFactory {
@@ -10,15 +16,32 @@ class ProductFactory {
      * @param {*} type
      *
      */
+    // static async createProduct(type, payload) {
+    //     switch (type) {
+    //         case 'Clothing':
+    //             return new Clothing(payload).createProduct();
+    //         case 'Electronic':
+    //             return new Electronics(payload).createProduct();
+    //         default:
+    //             throw new BadRequestError(`Invalid product type: ${type}`);
+    //     }
+    // }
+
+    // Apply Strategy Pattern
+    // Contain key - class
+    static productRegistry = {};
+
+    static registerProductType(type, classRef) {
+        ProductFactory.productRegistry[type] = classRef;
+    }
+
     static async createProduct(type, payload) {
-        switch (type) {
-            case 'Clothing':
-                return new Clothing(payload).createProduct();
-            case 'Electronic':
-                return new Electronics(payload).createProduct();
-            default:
-                throw new BadRequestError(`Invalid product type: ${type}`);
-        }
+        const productClass = ProductFactory.productRegistry[type];
+
+        if (!productClass)
+            throw new BadRequestError(`Invalid product type: ${type}`);
+
+        return new productClass(payload).createProduct();
     }
 }
 
@@ -89,5 +112,26 @@ class Electronics extends Product {
         return newProduct;
     }
 }
+
+class Furniture extends Product {
+    async createProduct() {
+        const newFurniture = await furniture.create({
+            ...this.product_attributes,
+            product_shop: this.product_shop,
+        });
+        if (!newFurniture)
+            throw new BadRequestError('Create new furniture error');
+
+        const newProduct = await super.createProduct(newFurniture._id);
+        if (!newProduct) throw new BadRequestError('Create new product error');
+
+        return newProduct;
+    }
+}
+
+// Register product type
+ProductFactory.registerProductType('Electronic', Electronics);
+ProductFactory.registerProductType('Clothing', Clothing);
+ProductFactory.registerProductType('Furniture', Furniture);
 
 module.exports = ProductFactory;
