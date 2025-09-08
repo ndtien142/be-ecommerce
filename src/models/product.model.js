@@ -25,7 +25,7 @@ const productSchema = new Schema(
                 'Other',
             ],
         },
-        product_shop: String,
+        product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
         product_attributes: { type: Schema.Types.Mixed, required: true },
     },
     {
@@ -41,6 +41,7 @@ const clothingSchema = new Schema(
         brand: { type: String, required: true },
         size: String,
         material: String,
+        product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
     },
     {
         collection: ProductCollectionName.CLOTHING,
@@ -54,6 +55,7 @@ const electronicsSchema = new Schema(
         model: String,
         color: String,
         warranty_period: String,
+        product_shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
     },
     {
         collection: ProductCollectionName.ELECTRONICS,
