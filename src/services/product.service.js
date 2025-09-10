@@ -17,6 +17,7 @@ const {
     findOneProduct,
     updateProductById,
 } = require('../models/repositories/product.repo');
+const { insertInventory } = require('../models/repositories/inventory.repo');
 
 // define the Factory Method class to create products based on their type
 class ProductFactory {
@@ -140,7 +141,16 @@ class Product {
 
     // Create new product
     async createProduct(productId) {
-        return await product.create({ ...this, _id: productId });
+        const newProduct = await product.create({ ...this, _id: productId });
+        if (newProduct) {
+            // add product_stock in inventory collection
+            await insertInventory({
+                productId,
+                shopId: this.product_shop,
+                stock: this.product_quantity,
+            });
+        }
+        return newProduct;
     }
 
     // Update product
