@@ -33,9 +33,21 @@ const unSelectData = (unSelect = []) => {
     return Object.fromEntries(unSelect.map((el) => [el, 0]));
 };
 
+const removeUndefinedObject = (obj) => {
+    for (const key in obj) {
+        if (obj[key] === null || typeof obj[key] === 'undefined') {
+            delete obj[key];
+        } else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+            cleanObject(obj[key]); // Recursively clean nested objects
+        }
+    }
+    return obj;
+};
+
 module.exports = {
     getInfoData,
     generateKeyPairSync,
     getSelectData,
     unSelectData,
+    removeUndefinedObject,
 };

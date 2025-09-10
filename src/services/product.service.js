@@ -15,6 +15,7 @@ const {
     searchProductByUser,
     findAllProductByUser,
     findOneProduct,
+    updateProductById,
 } = require('../models/repositories/product.repo');
 
 // define the Factory Method class to create products based on their type
@@ -52,7 +53,14 @@ class ProductFactory {
         return new productClass(payload).createProduct();
     }
 
-    static async updateProduct() {}
+    static async updateProduct(type, productId, payload) {
+        const productClass = ProductFactory.productRegistry[type];
+
+        if (!productClass)
+            throw new BadRequestError(`Invalid product type: ${type}`);
+
+        return new productClass(payload).updateProduct(productId);
+    }
 
     // Query
     static async findAllDraftsForShop({ product_shop, limit = 60, skip = 0 }) {
@@ -134,6 +142,11 @@ class Product {
     async createProduct(productId) {
         return await product.create({ ...this, _id: productId });
     }
+
+    // Update product
+    async updateProduct(productId, payload) {
+        return await updateProductById({ productId, payload, model: product });
+    }
 }
 
 // Define sub-class for different product types Clothing
@@ -153,6 +166,28 @@ class Clothing extends Product {
             throw new BadRequestError('Create new product error');
         }
         return newProduct;
+    }
+
+    async updateProduct(productId) {
+        console.log('prodcutId', productId);
+        // 1. remove attribute null or undefined
+        const objectParams = this;
+        // 2. where update
+        if (objectParams.product_attributes) {
+            // update child
+            await updateProductById({
+                productId,
+                model: clothing,
+                payload: objectParams.product_attributes,
+            });
+        }
+
+        const updateProduct = await super.updateProduct(
+            productId,
+            objectParams,
+        );
+
+        return updateProduct;
     }
 }
 
