@@ -13,6 +13,8 @@ const {
     queryProduct,
     unpublishProductShop,
     searchProductByUser,
+    findAllProductByUser,
+    findOneProduct,
 } = require('../models/repositories/product.repo');
 
 // define the Factory Method class to create products based on their type
@@ -50,6 +52,8 @@ class ProductFactory {
         return new productClass(payload).createProduct();
     }
 
+    static async updateProduct() {}
+
     // Query
     static async findAllDraftsForShop({ product_shop, limit = 60, skip = 0 }) {
         const query = { product_shop, isDraft: true };
@@ -63,6 +67,25 @@ class ProductFactory {
 
     static async searchProduct({ searchText }) {
         return await searchProductByUser({ searchText });
+    }
+
+    static async findAllProduct({
+        limit = 50,
+        sort = 'ctime',
+        page = 1,
+        filter = { isPublish: true },
+    }) {
+        return await findAllProductByUser({
+            filter,
+            limit,
+            sort,
+            page,
+            select: ['product_name', 'product_price', 'product_thumb'],
+        });
+    }
+
+    static async findProduct({ product_id }) {
+        return await findOneProduct({ product_id, unSelect: ['__v'] });
     }
 
     // PUT

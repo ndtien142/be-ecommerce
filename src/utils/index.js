@@ -25,7 +25,17 @@ const generateKeyPairSync = async ({ algorithm = 'rsa' }) => {
     return { privateKey, publicKey };
 };
 
+const getSelectData = (select = []) => {
+    return Object.fromEntries(select.map((el) => [el, 1]));
+};
+
+const unSelectData = (unSelect = []) => {
+    return Object.fromEntries(unSelect.map((el) => [el, 0]));
+};
+
 module.exports = {
     getInfoData,
     generateKeyPairSync,
+    getSelectData,
+    unSelectData,
 };

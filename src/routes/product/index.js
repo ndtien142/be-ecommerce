@@ -10,6 +10,8 @@ router.get(
     '/search/:searchText',
     asyncHandler(productController.searchProduct),
 );
+router.get('', asyncHandler(productController.findAllProducts));
+router.get('/:id', asyncHandler(productController.findProduct));
 
 // Authentication - handle check user can access to resource or not
 router.use(authentication);
