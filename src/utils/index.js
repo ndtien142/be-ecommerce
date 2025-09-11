@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const crypto = require('crypto');
+const { Types } = require('mongoose');
 
 const getInfoData = ({ field = [], object = {} }) => {
     return _.pick(object, field);
@@ -44,10 +45,13 @@ const removeUndefinedObject = (obj) => {
     return obj;
 };
 
+const convertToObjectMongodb = (id) => new Types.ObjectId(id);
+
 module.exports = {
     getInfoData,
     generateKeyPairSync,
     getSelectData,
     unSelectData,
     removeUndefinedObject,
+    convertToObjectMongodb,
 };
