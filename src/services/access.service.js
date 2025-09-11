@@ -36,7 +36,9 @@ class AccessService {
 
         if (newShop) {
             // created private key, publicKey
-            const { privateKey, publicKey } = await generateKeyPairSync();
+            const { privateKey, publicKey } = await generateKeyPairSync({
+                algorithm: 'rsa',
+            });
 
             const publicKeyString = await KeyTokenService.createKeyToken({
                 userId: newShop._id,
