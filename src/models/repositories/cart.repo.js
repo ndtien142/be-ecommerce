@@ -54,4 +54,17 @@ const findCartById = async ({ cartId }) => {
         .lean();
 };
 
-module.exports = { createUserCart, updateUserCart, findCartById };
+const updateCartState = async ({ cartId, state = 'pending' }) => {
+    return await cartModel
+        .findOneAndUpdate(cartId, {
+            cart_state: state,
+        })
+        .lean();
+};
+
+module.exports = {
+    createUserCart,
+    updateUserCart,
+    findCartById,
+    updateCartState,
+};
