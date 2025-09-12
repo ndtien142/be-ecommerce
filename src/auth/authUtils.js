@@ -5,6 +5,7 @@ const asyncHandler = require('../middleware/handleError');
 const { HEADER } = require('../common/common.constant');
 const KeyTokenService = require('../services/keyToken.service');
 const { AuthFailureError, NotFoundError } = require('../core/error.response');
+const { convertToObjectMongodb } = require('../utils');
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
     try {
@@ -45,7 +46,9 @@ const authentication = asyncHandler(async (req, res, next) => {
     if (!userId) throw new AuthFailureError('User ID is missing');
     if (!accessToken) throw new AuthFailureError('Access token is missing');
 
-    const keyStore = await KeyTokenService.findByUserId(userId);
+    const keyStore = await KeyTokenService.findByUserId(
+        convertToObjectMongodb(userId),
+    );
 
     if (!keyStore) throw new NotFoundError('Not found keyStore');
 
