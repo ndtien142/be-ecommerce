@@ -21,6 +21,16 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(compression());
 
+// Test pub/sub in redis
+// const redisPublishSubscribeService = require('./services/redisPubSub.service');
+// const inventory = require('./tests/inventory.test'); // subscriber
+// const productTest = require('./tests/product.test'); // publisher
+
+// (async () => {
+//     await redisPublishSubscribeService.connect();
+//     productTest.purchaseProduct('product::001', 10);
+// })();
+
 // init middlewares
 
 // init db
@@ -46,6 +56,7 @@ app.use((error, req, res, next) => {
         status: 'error',
         code: error.status || 500,
         message: error.message || 'Internal Server Error',
+        // stack: error.stack,
     });
 });
 
