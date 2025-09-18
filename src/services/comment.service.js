@@ -2,6 +2,7 @@
 
 const { BadRequestError, NotFoundError } = require('../core/error.response');
 const commentModel = require('../models/comment.model');
+const { findOneProduct } = require('../models/repositories/product.repo');
 const { convertToObjectMongodb } = require('../utils');
 
 /*
@@ -129,6 +130,48 @@ class CommentService {
             .lean();
 
         return comments;
+    }
+    static async deleteComment({ commentId, productId }) {
+        const foundProduct = await findOneProduct({ product_id: productId });
+
+        if (!foundProduct) throw new NotFoundError('Product not found');
+
+        const foundComment = await commentModel.findById(commentId);
+        if (!foundComment) throw new NotFoundError('Comment not found');
+
+        const leftValue = foundComment.comment_left;
+        const rightValue = foundComment.comment_right;
+        // calc with of comment
+        const width = rightValue - leftValue + 1;
+
+        // delete all nested comment
+        await commentModel.deleteMany({
+            comment_productId: convertToObjectMongodb(productId),
+            comment_left: { $gte: leftValue, $lte: rightValue },
+        });
+
+        // update left and right
+        await commentModel.updateMany(
+            {
+                comment_productId: convertToObjectMongodb(productId),
+                comment_right: { $gt: rightValue },
+            },
+            {
+                $inc: { comment_right: -width },
+            },
+        );
+
+        await commentModel.updateMany(
+            {
+                comment_productId: convertToObjectMongodb(productId),
+                comment_left: { $gt: rightValue },
+            },
+            {
+                $inc: { comment_left: -width },
+            },
+        );
+
+        return 'success';
     }
 }
 
